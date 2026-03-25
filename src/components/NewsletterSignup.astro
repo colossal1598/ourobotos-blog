@@ -1,0 +1,114 @@
+---
+interface Props {
+	variant?: 'inline' | 'full';
+}
+
+const { variant = 'full' } = Astro.props;
+---
+
+<section class:list={['newsletter-box', `variant-${variant}`]}>
+	<h2 class="headline">The loop, weekly.</h2>
+	<p class="sub">
+		One email a week. Essays on software, systems, and the ideas worth thinking about twice.
+	</p>
+	<form class="form" id="newsletter-form">
+		<input
+			type="email"
+			name="email"
+			placeholder="your@email.com"
+			required
+			aria-label="Email address"
+			class="email-input"
+		/>
+		<button type="submit" class="submit-btn">Subscribe →</button>
+	</form>
+	<p class="fine-print">No tracking. No ads. Unsubscribe any time.</p>
+</section>
+
+<style>
+	.newsletter-box {
+		background-color: var(--bg-secondary);
+		border: 1px solid var(--border);
+		border-radius: var(--radius-xl);
+		padding: var(--space-10) var(--space-8);
+		max-width: 560px;
+		margin: 0 auto;
+	}
+
+	.variant-inline {
+		padding: var(--space-8);
+		margin-top: var(--space-12);
+	}
+
+	.headline {
+		font-family: var(--font-sans);
+		font-size: var(--text-2xl);
+		font-weight: 600;
+		color: var(--text-primary);
+		margin: 0 0 var(--space-3);
+		line-height: 1.2;
+	}
+
+	.sub {
+		font-family: var(--font-sans);
+		font-size: var(--text-sm);
+		color: var(--text-secondary);
+		margin: 0 0 var(--space-6);
+		line-height: 1.6;
+	}
+
+	.form {
+		display: flex;
+		gap: var(--space-3);
+		margin-bottom: var(--space-3);
+	}
+
+	.email-input {
+		flex: 1;
+		background-color: var(--bg-tertiary);
+	}
+
+	.submit-btn {
+		font-family: var(--font-sans);
+		font-size: var(--text-base);
+		font-weight: 500;
+		background-color: var(--accent);
+		color: #ffffff;
+		border: none;
+		border-radius: var(--radius-md);
+		padding: var(--space-3) var(--space-5);
+		cursor: pointer;
+		white-space: nowrap;
+		transition: background-color 150ms ease;
+	}
+
+	.submit-btn:hover {
+		background-color: var(--accent-hover);
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		.submit-btn:active {
+			transform: scale(0.98);
+			transition:
+				transform 100ms ease,
+				background-color 150ms ease;
+		}
+	}
+
+	.fine-print {
+		font-family: var(--font-sans);
+		font-size: var(--text-xs);
+		color: var(--text-muted);
+		margin: 0;
+	}
+
+	@media (max-width: 480px) {
+		.form {
+			flex-direction: column;
+		}
+
+		.submit-btn {
+			width: 100%;
+		}
+	}
+</style>

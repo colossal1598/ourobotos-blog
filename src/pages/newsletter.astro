@@ -1,0 +1,108 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={`Newsletter — ${SITE_TITLE}`}
+			description="The loop, weekly. One email a week on software, systems, and the ideas worth thinking about twice."
+		/>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section class="hero">
+				<h1 class="hero-title">The loop, weekly.</h1>
+				<p class="hero-sub">
+					ouroboros in your inbox. Essays, observations, and the occasional tool worth knowing
+					about — curated, not just a digest.
+				</p>
+			</section>
+
+			<NewsletterSignup variant="full" />
+
+			<section class="about-section">
+				<h2 class="about-title">What you're signing up for</h2>
+				<ul class="about-list">
+					<li>One email per week, never more</li>
+					<li>The highest-signal version of ouroboros content</li>
+					<li>No AI-generated filler — every issue is written by a person</li>
+					<li>No sponsor slots, no affiliate links</li>
+				</ul>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	main {
+		max-width: 680px;
+		margin: 0 auto;
+		padding: var(--space-16) var(--space-6) 0;
+	}
+
+	.hero {
+		margin-bottom: var(--space-12);
+		text-align: center;
+	}
+
+	.hero-title {
+		font-family: var(--font-sans);
+		font-size: var(--text-5xl);
+		font-weight: 700;
+		letter-spacing: -0.03em;
+		color: var(--text-primary);
+		margin: 0 0 var(--space-5);
+	}
+
+	.hero-sub {
+		font-family: var(--font-serif);
+		font-size: var(--text-lg);
+		color: var(--text-secondary);
+		line-height: 1.7;
+		margin: 0;
+		font-style: italic;
+	}
+
+	.about-section {
+		margin-top: var(--space-16);
+	}
+
+	.about-title {
+		font-family: var(--font-sans);
+		font-size: var(--text-xl);
+		font-weight: 600;
+		color: var(--text-primary);
+		margin: 0 0 var(--space-5);
+	}
+
+	.about-list {
+		font-family: var(--font-sans);
+		font-size: var(--text-base);
+		color: var(--text-secondary);
+		line-height: 1.8;
+		padding-left: var(--space-6);
+		margin: 0;
+	}
+
+	.about-list li {
+		margin-bottom: var(--space-2);
+	}
+
+	@media (max-width: 480px) {
+		main {
+			padding: var(--space-10) var(--space-4) 0;
+		}
+
+		.hero-title {
+			font-size: var(--text-4xl);
+		}
+	}
+</style>

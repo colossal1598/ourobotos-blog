@@ -1,8 +1,24 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import ImagePlaceholder from '../components/ImagePlaceholder.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
+import PostCard from '../components/PostCard.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const allPosts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const [featured, ...rest] = allPosts;
+const secondary = rest.slice(0, 4);
+
+// Estimate reading time for featured post
+const featuredWordCount = featured?.body?.split(/\s+/).filter(Boolean).length ?? 0;
+const featuredReadingTime = Math.max(1, Math.ceil(featuredWordCount / 200));
 ---
 
 <!doctype html>
@@ -13,37 +29,287 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 	<body>
 		<Header />
 		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
+			<!-- Masthead -->
+			<section class="masthead">
+				<h1 class="site-title">ouroboros</h1>
+				<p class="site-tagline">
+					<em>Writing at the intersection of technology and thought.</em>
+				</p>
+			</section>
+
+			<!-- Featured post hero -->
+			{
+				featured && (
+					<section class="hero">
+						<div class="hero-text">
+							<div class="hero-meta">
+								<span class:list={['cat-label', `cat-${featured.data.category}`]}>
+									[{featured.data.category}]
+								</span>
+								<span class="meta-sep" aria-hidden="true">·</span>
+								<FormattedDate date={featured.data.pubDate} />
+								<span class="meta-sep" aria-hidden="true">·</span>
+								<span class="reading-time">{featuredReadingTime} min read</span>
+							</div>
+
+							<h2 class="hero-title">
+								<a href={`/blog/${featured.id}/`}>{featured.data.title}</a>
+							</h2>
+
+							<p class="hero-description">{featured.data.description}</p>
+
+							{featured.data.summary && (
+								<p class="hero-excerpt">{featured.data.summary}</p>
+							)}
+
+							<a href={`/blog/${featured.id}/`} class="continue-reading">
+								Continue reading →
+							</a>
+						</div>
+
+						<div class="hero-visual">
+							<ImagePlaceholder ratio="4/3" />
+						</div>
+					</section>
+				)
+			}
+
+			<!-- Secondary posts grid -->
+			{
+				secondary.length > 0 && (
+					<section class="secondary-grid">
+						{secondary.map((post) => (
+							<PostCard post={post} showPlaceholder={true} />
+						))}
+					</section>
+				)
+			}
+
+			<!-- Newsletter CTA -->
+			<section class="newsletter-section">
+				<NewsletterSignup />
+			</section>
 		</main>
 		<Footer />
 	</body>
 </html>
+
+<style>
+	main {
+		max-width: 1100px;
+		margin: 0 auto;
+		padding: var(--space-16) var(--space-6) 0;
+	}
+
+	/* ---- Masthead ---- */
+
+	.masthead {
+		margin-bottom: var(--space-16);
+	}
+
+	.site-title {
+		font-family: var(--font-sans);
+		font-size: var(--text-6xl);
+		font-weight: 700;
+		letter-spacing: -0.04em;
+		line-height: 1;
+		color: var(--text-primary);
+		margin: 0 0 var(--space-4);
+	}
+
+	.site-tagline {
+		font-family: var(--font-serif);
+		font-size: var(--text-lg);
+		color: var(--text-secondary);
+		margin: 0;
+		font-style: italic;
+	}
+
+	/* ---- Hero ---- */
+
+	.hero {
+		display: grid;
+		grid-template-columns: 1fr 1.1fr;
+		gap: var(--space-10);
+		align-items: center;
+		background-color: var(--bg-secondary);
+		border: 1px solid var(--border);
+		border-radius: var(--radius-lg);
+		padding: var(--space-10);
+		margin-bottom: var(--space-10);
+		min-height: 440px;
+	}
+
+	/* ---- Hero text side ---- */
+
+	.hero-meta {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+		font-family: var(--font-sans);
+		font-size: var(--text-xs);
+		color: var(--text-muted);
+		margin-bottom: var(--space-5);
+	}
+
+	.cat-label {
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		letter-spacing: 0.01em;
+	}
+
+	.meta-sep {
+		color: var(--text-muted);
+	}
+
+	.reading-time {
+		font-family: var(--font-mono);
+	}
+
+	/* Category text colors */
+	.cat-tutorial { color: var(--accent); }
+	.cat-opinion  { color: #c9900c; }
+	.cat-news     { color: #4caf50; }
+	.cat-analysis { color: #d4a843; }
+
+	:global(html[data-theme="light"]) .cat-opinion  { color: #7a4f0d; }
+	:global(html[data-theme="light"]) .cat-news     { color: #1e6b21; }
+	:global(html[data-theme="light"]) .cat-analysis { color: #6b4f0a; }
+
+	.hero-title {
+		font-family: var(--font-sans);
+		font-size: var(--text-4xl);
+		font-weight: 700;
+		line-height: 1.1;
+		letter-spacing: -0.02em;
+		color: var(--text-primary);
+		margin: 0 0 var(--space-5);
+	}
+
+	.hero-title a {
+		color: inherit;
+		text-decoration: none;
+		transition: color 150ms ease;
+	}
+
+	.hero-title a:hover {
+		color: var(--accent);
+		text-decoration: none;
+	}
+
+	.hero-description {
+		font-family: var(--font-serif);
+		font-size: var(--text-base);
+		color: var(--text-secondary);
+		line-height: 1.7;
+		margin: 0 0 var(--space-4);
+	}
+
+	.hero-excerpt {
+		font-family: var(--font-serif);
+		font-size: var(--text-sm);
+		color: var(--text-muted);
+		line-height: 1.7;
+		margin: 0 0 var(--space-8);
+		/* Clamp to 3 lines */
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.continue-reading {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		font-family: var(--font-sans);
+		font-size: var(--text-sm);
+		font-weight: 500;
+		color: var(--accent);
+		text-decoration: none;
+		border-bottom: 1px solid transparent;
+		padding-bottom: 1px;
+		transition:
+			color 150ms ease,
+			border-bottom-color 150ms ease;
+	}
+
+	.continue-reading:hover {
+		color: var(--accent-hover);
+		border-bottom-color: var(--accent-hover);
+		text-decoration: none;
+	}
+
+	/* ---- Hero visual side ---- */
+
+	.hero-visual {
+		height: 100%;
+		display: flex;
+		align-items: stretch;
+	}
+
+	.hero-visual :global(.img-placeholder) {
+		height: 100%;
+		min-height: 280px;
+	}
+
+	/* ---- Secondary grid ---- */
+
+	.secondary-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: var(--space-5);
+		margin-bottom: var(--space-16);
+	}
+
+	/* ---- Newsletter ---- */
+
+	.newsletter-section {
+		margin-bottom: var(--space-20);
+	}
+
+	/* ---- Responsive ---- */
+
+	@media (max-width: 860px) {
+		.hero {
+			grid-template-columns: 1fr;
+			min-height: unset;
+		}
+
+		.hero-visual {
+			order: -1;
+		}
+
+		.hero-visual :global(.img-placeholder) {
+			min-height: unset;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.site-title {
+			font-size: var(--text-5xl);
+		}
+
+		.hero {
+			padding: var(--space-6);
+		}
+
+		.hero-title {
+			font-size: var(--text-3xl);
+		}
+
+		.secondary-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 480px) {
+		main {
+			padding: var(--space-10) var(--space-4) 0;
+		}
+
+		.site-title {
+			font-size: var(--text-4xl);
+		}
+	}
+</style>

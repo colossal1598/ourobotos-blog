@@ -1,0 +1,56 @@
+<!-- 2px fixed line at viewport top; width driven by scroll position within <article> -->
+<div
+	id="reading-progress"
+	role="progressbar"
+	aria-label="Reading progress"
+	aria-valuemin="0"
+	aria-valuemax="100"
+	aria-valuenow="0"
+>
+</div>
+
+<style>
+	#reading-progress {
+		position: fixed;
+		top: 0;
+		left: 0;
+		height: 2px;
+		width: 0%;
+		background-color: var(--accent);
+		z-index: 9999;
+		transition: width 80ms linear;
+		pointer-events: none;
+	}
+</style>
+
+<script>
+	const bar = document.getElementById('reading-progress');
+	const article = document.querySelector('article.post-article');
+
+	if (bar && article) {
+		let completionFlashTimer: ReturnType<typeof setTimeout> | null = null;
+
+		function updateProgress() {
+			const articleEl = article as HTMLElement;
+			const articleTop = articleEl.offsetTop;
+			const articleHeight = articleEl.offsetHeight;
+			const scrolled = window.scrollY - articleTop;
+			const total = articleHeight - window.innerHeight;
+			const pct = Math.min(Math.max((scrolled / total) * 100, 0), 100);
+
+			bar!.style.width = pct + '%';
+			bar!.setAttribute('aria-valuenow', String(Math.round(pct)));
+
+			if (pct >= 100 && !completionFlashTimer) {
+				bar!.style.backgroundColor = 'var(--accent-hover)';
+				completionFlashTimer = setTimeout(() => {
+					if (bar) bar.style.backgroundColor = 'var(--accent)';
+					completionFlashTimer = null;
+				}, 300);
+			}
+		}
+
+		window.addEventListener('scroll', updateProgress, { passive: true });
+		updateProgress();
+	}
+</script>
