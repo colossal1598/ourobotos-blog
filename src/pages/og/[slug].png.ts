@@ -1,8 +1,17 @@
-import { getCollection } from 'astro:content';
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { getCollection } from 'astro:content';
 import satori from 'satori';
 import sharp from 'sharp';
+
+// Resolve font paths relative to the project root, not the bundled chunk location.
+// import.meta.env.BASE_URL is always '/' in static builds; we use process.cwd()
+// which is the project root during `astro build`.
+const fontRegularData = readFileSync(
+	new URL('src/assets/fonts/dm-sans-400.ttf', `file://${process.cwd()}/`),
+);
+const fontBoldData = readFileSync(
+	new URL('src/assets/fonts/dm-sans-700.ttf', `file://${process.cwd()}/`),
+);
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
@@ -14,13 +23,6 @@ export async function getStaticPaths() {
 		},
 	}));
 }
-
-const fontRegular = readFileSync(
-	join(process.cwd(), 'src/assets/fonts/dm-sans-400.ttf'),
-);
-const fontBold = readFileSync(
-	join(process.cwd(), 'src/assets/fonts/dm-sans-700.ttf'),
-);
 
 const CATEGORY_COLORS: Record<string, string> = {
 	tutorial:  '#3b8fd4',
@@ -149,8 +151,8 @@ export async function GET({ props }: { props: Props }) {
 			width: 1200,
 			height: 630,
 			fonts: [
-				{ name: 'DM Sans', data: fontRegular, weight: 400, style: 'normal' },
-				{ name: 'DM Sans', data: fontBold, weight: 700, style: 'normal' },
+				{ name: 'DM Sans', data: fontRegularData, weight: 400, style: 'normal' },
+				{ name: 'DM Sans', data: fontBoldData, weight: 700, style: 'normal' },
 			],
 		},
 	);
