@@ -17,8 +17,9 @@ const posts = (await getCollection('blog')).sort(
 		<BaseHead title={`Writing — ${SITE_TITLE}`} description="All essays and posts." />
 	</head>
 	<body>
+		<a href="#main-content" class="skip-link">Skip to content</a>
 		<Header />
-		<main>
+		<main id="main-content">
 			<header class="page-header">
 				<h1 class="page-title">Writing</h1>
 				<p class="page-sub">Essays on software, systems, and the ideas behind them.</p>

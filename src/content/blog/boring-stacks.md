@@ -3,6 +3,8 @@ title: "The Unreasonable Effectiveness of Boring Stacks"
 description: "Why the most productive engineering teams consistently choose technologies that cause no excitement whatsoever."
 pubDate: 2026-03-20
 category: opinion
+featured: true
+tags: ["engineering", "productivity", "software-design"]
 summary: "The most productive engineering teams I've seen share an unusual trait: they're deeply unexcited by their own stack. They picked boring tools on purpose, and it's paying off in ways that are hard to measure until you've lived on both sides."
 keyPoints:
   - "Boring technologies are boring because they've solved the hard problems already"

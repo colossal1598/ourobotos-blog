@@ -1,12 +1,11 @@
-/* Fonts via fontsource */
-@import "@fontsource-variable/dm-sans";
-@import "@fontsource-variable/lora";
-@import "@fontsource/jetbrains-mono/400.css";
-@import "@fontsource/jetbrains-mono/500.css";
-
 /* ============================================================
    DESIGN TOKENS
    ============================================================ */
+
+/* Theme-independent tokens */
+:root {
+	--color-on-accent: #ffffff;
+}
 
 /* Dark theme — default */
 :root,
@@ -23,6 +22,10 @@ html[data-theme="dark"] {
 	--accent:        #3b8fd4;
 	--accent-hover:  #58a6e8;
 	--accent-muted:  #1a3a5c;
+	/* Category label colors */
+	--cat-opinion:   #c9900c;
+	--cat-news:      #4caf50;
+	--cat-analysis:  #d4a843;
 }
 
 /* Light theme */
@@ -39,6 +42,10 @@ html[data-theme="light"] {
 	--accent:        #1a5fa8;
 	--accent-hover:  #134782;
 	--accent-muted:  #dde8f4;
+	/* Category label colors */
+	--cat-opinion:   #7a4f0d;
+	--cat-news:      #1e6b21;
+	--cat-analysis:  #6b4f0a;
 }
 
 /* Type scale */
@@ -89,8 +96,10 @@ html[data-theme="light"] {
 	box-sizing: border-box;
 }
 
-html {
-	scroll-behavior: smooth;
+@media (prefers-reduced-motion: no-preference) {
+	html {
+		scroll-behavior: smooth;
+	}
 }
 
 body {
@@ -105,7 +114,6 @@ body {
 	overflow-wrap: break-word;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	transition: background-color 200ms ease, color 200ms ease;
 }
 
 /* ============================================================
@@ -296,9 +304,10 @@ textarea {
 	width: 100%;
 }
 
-input:focus,
-textarea:focus {
+input:focus-visible,
+textarea:focus-visible {
 	border-color: var(--accent);
+	box-shadow: 0 0 0 3px var(--accent-muted);
 }
 
 input::placeholder,
@@ -309,6 +318,27 @@ textarea::placeholder {
 /* ============================================================
    UTILITIES
    ============================================================ */
+
+.skip-link {
+	position: absolute;
+	top: -100%;
+	left: var(--space-4);
+	z-index: 9999;
+	padding: var(--space-2) var(--space-4);
+	background-color: var(--bg-elevated);
+	color: var(--text-primary);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-md);
+	font-family: var(--font-sans);
+	font-size: var(--text-sm);
+	font-weight: 500;
+	text-decoration: none;
+	transition: top 150ms ease;
+}
+
+.skip-link:focus-visible {
+	top: var(--space-4);
+}
 
 .sr-only {
 	border: 0;

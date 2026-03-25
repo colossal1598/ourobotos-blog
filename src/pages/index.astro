@@ -1,98 +1,84 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
-import ImagePlaceholder from '../components/ImagePlaceholder.astro';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
 import PostCard from '../components/PostCard.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import BaseLayout from '../layouts/BaseLayout.astro';
 
 const allPosts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 
-const [featured, ...rest] = allPosts;
+// Prefer explicitly featured post; fall back to most recent
+const featuredPost = allPosts.find((p) => p.data.featured) ?? allPosts[0];
+const rest = allPosts.filter((p) => p.id !== featuredPost?.id);
 const secondary = rest.slice(0, 4);
 
-// Estimate reading time for featured post
-const featuredWordCount = featured?.body?.split(/\s+/).filter(Boolean).length ?? 0;
-const featuredReadingTime = Math.max(1, Math.ceil(featuredWordCount / 200));
+// Use frontmatter readingTime if set, otherwise approximate
+const featuredWordCount = featuredPost?.body?.split(/\s+/).filter(Boolean).length ?? 0;
+const featuredReadingTime =
+	featuredPost?.data.readingTime ?? Math.max(1, Math.ceil(featuredWordCount / 200));
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<!-- Masthead -->
-			<section class="masthead">
-				<h1 class="site-title">ouroboros</h1>
-				<p class="site-tagline">
-					<em>Writing at the intersection of technology and thought.</em>
-				</p>
-			</section>
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+	<main id="main-content">
+		<!-- Masthead -->
+		<section class="masthead">
+			<h1 class="site-title">ourobotos</h1>
+			<p class="site-tagline">
+				<em>Writing at the intersection of technology and thought.</em>
+			</p>
+		</section>
 
-			<!-- Featured post hero -->
-			{
-				featured && (
-					<section class="hero">
-						<div class="hero-text">
-							<div class="hero-meta">
-								<span class:list={['cat-label', `cat-${featured.data.category}`]}>
-									[{featured.data.category}]
-								</span>
-								<span class="meta-sep" aria-hidden="true">·</span>
-								<FormattedDate date={featured.data.pubDate} />
-								<span class="meta-sep" aria-hidden="true">·</span>
-								<span class="reading-time">{featuredReadingTime} min read</span>
-							</div>
+		<!-- Featured post hero -->
+		{
+			featuredPost && (
+				<section class="hero">
+					<div class="hero-meta">
+						<span class:list={['cat-label', `cat-${featuredPost.data.category}`]}>
+							[{featuredPost.data.category}]
+						</span>
+						<span class="meta-sep" aria-hidden="true">·</span>
+						<FormattedDate date={featuredPost.data.pubDate} />
+						<span class="meta-sep" aria-hidden="true">·</span>
+						<span class="reading-time">{featuredReadingTime} min read</span>
+					</div>
 
-							<h2 class="hero-title">
-								<a href={`/blog/${featured.id}/`}>{featured.data.title}</a>
-							</h2>
+					<h2 class="hero-title">
+						<a href={`/blog/${featuredPost.id}/`}>{featuredPost.data.title}</a>
+					</h2>
 
-							<p class="hero-description">{featured.data.description}</p>
+					<p class="hero-description">{featuredPost.data.description}</p>
 
-							{featured.data.summary && (
-								<p class="hero-excerpt">{featured.data.summary}</p>
-							)}
+					{featuredPost.data.summary && (
+						<p class="hero-excerpt">{featuredPost.data.summary}</p>
+					)}
 
-							<a href={`/blog/${featured.id}/`} class="continue-reading">
-								Continue reading →
-							</a>
-						</div>
+					<a href={`/blog/${featuredPost.id}/`} class="continue-reading">
+						Continue reading →
+					</a>
+				</section>
+			)
+		}
 
-						<div class="hero-visual">
-							<ImagePlaceholder ratio="4/3" />
-						</div>
-					</section>
-				)
-			}
+		<!-- Secondary posts grid -->
+		{
+			secondary.length > 0 && (
+				<section class="secondary-grid">
+					{secondary.map((post) => (
+						<PostCard post={post} />
+					))}
+				</section>
+			)
+		}
 
-			<!-- Secondary posts grid -->
-			{
-				secondary.length > 0 && (
-					<section class="secondary-grid">
-						{secondary.map((post) => (
-							<PostCard post={post} showPlaceholder={true} />
-						))}
-					</section>
-				)
-			}
-
-			<!-- Newsletter CTA -->
-			<section class="newsletter-section">
-				<NewsletterSignup />
-			</section>
-		</main>
-		<Footer />
-	</body>
-</html>
+		<!-- Newsletter CTA -->
+		<section class="newsletter-section">
+			<NewsletterSignup />
+		</section>
+	</main>
+</BaseLayout>
 
 <style>
 	main {
@@ -128,19 +114,13 @@ const featuredReadingTime = Math.max(1, Math.ceil(featuredWordCount / 200));
 	/* ---- Hero ---- */
 
 	.hero {
-		display: grid;
-		grid-template-columns: 1fr 1.1fr;
-		gap: var(--space-10);
-		align-items: center;
-		background-color: var(--bg-secondary);
-		border: 1px solid var(--border);
-		border-radius: var(--radius-lg);
-		padding: var(--space-10);
-		margin-bottom: var(--space-10);
-		min-height: 440px;
+		border-top: 1px solid var(--border);
+		border-bottom: 1px solid var(--border);
+		padding: var(--space-12) 0;
+		margin-bottom: var(--space-12);
 	}
 
-	/* ---- Hero text side ---- */
+	/* ---- Hero meta ---- */
 
 	.hero-meta {
 		display: flex;
@@ -168,22 +148,19 @@ const featuredReadingTime = Math.max(1, Math.ceil(featuredWordCount / 200));
 
 	/* Category text colors */
 	.cat-tutorial { color: var(--accent); }
-	.cat-opinion  { color: #c9900c; }
-	.cat-news     { color: #4caf50; }
-	.cat-analysis { color: #d4a843; }
-
-	:global(html[data-theme="light"]) .cat-opinion  { color: #7a4f0d; }
-	:global(html[data-theme="light"]) .cat-news     { color: #1e6b21; }
-	:global(html[data-theme="light"]) .cat-analysis { color: #6b4f0a; }
+	.cat-opinion  { color: var(--cat-opinion); }
+	.cat-news     { color: var(--cat-news); }
+	.cat-analysis { color: var(--cat-analysis); }
 
 	.hero-title {
 		font-family: var(--font-sans);
-		font-size: var(--text-4xl);
+		font-size: var(--text-5xl);
 		font-weight: 700;
-		line-height: 1.1;
-		letter-spacing: -0.02em;
+		line-height: 1.05;
+		letter-spacing: -0.03em;
 		color: var(--text-primary);
-		margin: 0 0 var(--space-5);
+		margin: 0 0 var(--space-6);
+		max-width: 820px;
 	}
 
 	.hero-title a {
@@ -211,7 +188,6 @@ const featuredReadingTime = Math.max(1, Math.ceil(featuredWordCount / 200));
 		color: var(--text-muted);
 		line-height: 1.7;
 		margin: 0 0 var(--space-8);
-		/* Clamp to 3 lines */
 		display: -webkit-box;
 		-webkit-line-clamp: 3;
 		-webkit-box-orient: vertical;
@@ -240,19 +216,6 @@ const featuredReadingTime = Math.max(1, Math.ceil(featuredWordCount / 200));
 		text-decoration: none;
 	}
 
-	/* ---- Hero visual side ---- */
-
-	.hero-visual {
-		height: 100%;
-		display: flex;
-		align-items: stretch;
-	}
-
-	.hero-visual :global(.img-placeholder) {
-		height: 100%;
-		min-height: 280px;
-	}
-
 	/* ---- Secondary grid ---- */
 
 	.secondary-grid {
@@ -270,32 +233,13 @@ const featuredReadingTime = Math.max(1, Math.ceil(featuredWordCount / 200));
 
 	/* ---- Responsive ---- */
 
-	@media (max-width: 860px) {
-		.hero {
-			grid-template-columns: 1fr;
-			min-height: unset;
-		}
-
-		.hero-visual {
-			order: -1;
-		}
-
-		.hero-visual :global(.img-placeholder) {
-			min-height: unset;
-		}
-	}
-
 	@media (max-width: 640px) {
 		.site-title {
 			font-size: var(--text-5xl);
 		}
 
-		.hero {
-			padding: var(--space-6);
-		}
-
 		.hero-title {
-			font-size: var(--text-3xl);
+			font-size: var(--text-4xl);
 		}
 
 		.secondary-grid {
@@ -310,6 +254,10 @@ const featuredReadingTime = Math.max(1, Math.ceil(featuredWordCount / 200));
 
 		.site-title {
 			font-size: var(--text-4xl);
+		}
+
+		.hero-title {
+			font-size: var(--text-3xl);
 		}
 	}
 </style>

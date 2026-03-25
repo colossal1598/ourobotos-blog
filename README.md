@@ -1,62 +1,107 @@
-# Astro Starter Kit: Blog
+# ourobotos
 
-```sh
-npm create astro@latest -- --template blog
-```
+Personal blog by Eyal — writing at the intersection of technology and thought. Essays on software, systems, and the ideas behind them.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+**Live site:** [ourobotos.net](https://ourobotos.net)
 
-Features:
+---
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and Open Graph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+## Tech Stack
 
-## 🚀 Project Structure
+| Layer | Technology |
+| :---- | :--------- |
+| Framework | [Astro 6](https://astro.build) — static output, no adapter |
+| Content | Markdown + MDX via `@astrojs/mdx` |
+| OG Images | Dynamic generation with [Satori](https://github.com/vercel/satori) + [Sharp](https://sharp.pixelplumbing.com) |
+| Feeds | RSS via `@astrojs/rss`, Sitemap via `@astrojs/sitemap` |
+| Fonts | DM Sans (UI), Lora (body), JetBrains Mono (code) — all variable/subsettable via `@fontsource-variable` |
+| Analytics | [Umami](https://umami.is) — privacy-first, no cookies |
+| Theme | Dark/light toggle with no flash on load |
 
-Inside of your Astro project, you'll see the following folders and files:
+---
+
+## Project Structure
 
 ```text
-├── public/
-├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+src/
+├── components/
+│   ├── BaseHead.astro        # <head>: meta, OG, fonts, analytics, theme script
+│   ├── Header.astro          # Site header with nav and theme toggle
+│   ├── HeaderLink.astro      # Active-state nav links
+│   ├── Footer.astro          # Site footer
+│   ├── PostCard.astro        # Blog listing card
+│   ├── AISummary.astro       # AI-generated post summary block
+│   ├── ReadingProgress.astro # Reading progress indicator
+│   ├── NewsletterSignup.astro
+│   └── CodeBlock.astro
+├── content/
+│   └── blog/                 # .md / .mdx posts
+├── layouts/
+│   ├── BaseLayout.astro      # Wraps all pages
+│   └── PostLayout.astro      # Wraps individual blog posts
+├── pages/
+│   ├── index.astro           # /
+│   ├── about.astro           # /about
+│   ├── writing.astro         # /writing
+│   ├── tools.astro           # /tools
+│   ├── newsletter.astro      # /newsletter
+│   ├── blog/
+│   │   ├── index.astro       # /blog
+│   │   └── [...slug].astro   # /blog/[slug]
+│   ├── og/
+│   │   └── [slug].png.ts     # /og/[slug].png  (dynamic OG images)
+│   └── rss.xml.js            # /rss.xml
+├── consts.ts                 # SITE_TITLE, SITE_DESCRIPTION
+└── styles/
+    └── global.css
+astro.config.mjs
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+---
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## Routes
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+| Route | Description |
+| :---- | :---------- |
+| `/` | Home |
+| `/writing` | Post listing |
+| `/blog/[slug]` | Individual post |
+| `/tools` | Tools page |
+| `/about` | About page |
+| `/newsletter` | Newsletter signup |
+| `/rss.xml` | RSS feed |
+| `/og/[slug].png` | Auto-generated OG image per post |
 
-Any static assets, like images, can be placed in the `public/` directory.
+---
 
-## 🧞 Commands
+## Commands
 
-All commands are run from the root of the project, from a terminal:
+All commands run from the project root:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+| Command | Action |
+| :------ | :----- |
+| `npm install` | Install dependencies |
+| `npm run dev` | Start dev server at `localhost:4321` |
+| `npm run build` | Build to `./dist/` |
+| `npm run preview` | Preview the production build locally |
 
-## 👀 Want to learn more?
+---
 
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## Writing a New Post
 
-## Credit
+Create a new file in `src/content/blog/` with the following frontmatter:
 
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+```md
+---
+title: "Your Post Title"
+description: "A short description for SEO and post cards."
+pubDate: 2026-03-25
+category: opinion  # tutorial | opinion | news | analysis
+tags: ["tag1", "tag2"]
+featured: false
+---
+
+Post body here.
+```
+
+The post will automatically appear in `/writing`, get an OG image at `/og/[slug].png`, and be included in the RSS feed.

@@ -28,14 +28,21 @@
 	const article = document.querySelector('article.post-article');
 
 	if (bar && article) {
+		let articleTop = 0;
+		let articleHeight = 0;
+		let viewportHeight = 0;
 		let completionFlashTimer: ReturnType<typeof setTimeout> | null = null;
 
+		function measureLayout() {
+			const el = article as HTMLElement;
+			articleTop = el.offsetTop;
+			articleHeight = el.offsetHeight;
+			viewportHeight = window.innerHeight;
+		}
+
 		function updateProgress() {
-			const articleEl = article as HTMLElement;
-			const articleTop = articleEl.offsetTop;
-			const articleHeight = articleEl.offsetHeight;
 			const scrolled = window.scrollY - articleTop;
-			const total = articleHeight - window.innerHeight;
+			const total = articleHeight - viewportHeight;
 			const pct = Math.min(Math.max((scrolled / total) * 100, 0), 100);
 
 			bar!.style.width = pct + '%';
@@ -50,7 +57,14 @@
 			}
 		}
 
-		window.addEventListener('scroll', updateProgress, { passive: true });
+		measureLayout();
 		updateProgress();
+
+		window.addEventListener('scroll', updateProgress, { passive: true });
+		window.addEventListener('resize', measureLayout, { passive: true });
+
+		// Re-measure if article content changes size (e.g. images load)
+		const ro = new ResizeObserver(measureLayout);
+		ro.observe(article as Element);
 	}
 </script>

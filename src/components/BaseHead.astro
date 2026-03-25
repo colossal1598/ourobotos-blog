@@ -9,10 +9,12 @@ import { SITE_TITLE } from '../consts';
 interface Props {
 	title: string;
 	description: string;
+	ogImage?: string;
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const { title, description } = Astro.props;
+const { title, description, ogImage } = Astro.props;
+const ogImageURL = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
 ---
 
 <!--
@@ -21,7 +23,7 @@ const { title, description } = Astro.props;
 -->
 <script is:inline>
 	(function () {
-		var stored = localStorage.getItem('ouroboros-theme');
+			var stored = localStorage.getItem('ourobotos-theme');
 		var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 		var theme = stored || (prefersDark ? 'dark' : 'light');
 		document.documentElement.setAttribute('data-theme', theme);
@@ -54,9 +56,14 @@ const { title, description } = Astro.props;
 <meta property="og:url" content={Astro.url} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
+{ogImageURL && <meta property="og:image" content={ogImageURL} />}
 
 <!-- Twitter -->
-<meta property="twitter:card" content="summary" />
+<meta property="twitter:card" content={ogImageURL ? 'summary_large_image' : 'summary'} />
 <meta property="twitter:url" content={Astro.url} />
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
+{ogImageURL && <meta property="twitter:image" content={ogImageURL} />}
+
+<!-- Umami Analytics -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="fb3a6286-6380-4ac4-a382-de57ce0170a7"></script>

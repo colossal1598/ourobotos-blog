@@ -4,12 +4,12 @@ import HeaderLink from './HeaderLink.astro';
 
 <header id="site-header">
 	<nav class="nav-inner">
-		<a href="/" class="wordmark">ouroboros</a>
+		<a href="/" class="wordmark">ourobotos</a>
 
 		<div class="nav-links">
 			<HeaderLink href="/writing">Writing</HeaderLink>
-			<HeaderLink href="/tools">Tools</HeaderLink>
-			<HeaderLink href="/about">About</HeaderLink>
+			<HeaderLink href="/tools" class="nav-secondary">Tools</HeaderLink>
+			<HeaderLink href="/about" class="nav-secondary">About</HeaderLink>
 			<HeaderLink href="/newsletter">Newsletter</HeaderLink>
 		</div>
 
@@ -117,8 +117,8 @@ import HeaderLink from './HeaderLink.astro';
 		color: var(--text-secondary);
 		padding: var(--space-2);
 		border-radius: var(--radius-md);
-		width: 36px;
-		height: 36px;
+		min-width: 44px;
+		min-height: 44px;
 		transition:
 			color 150ms ease,
 			background-color 150ms ease;
@@ -148,6 +148,11 @@ import HeaderLink from './HeaderLink.astro';
 		.nav-inner {
 			padding: 0 var(--space-4);
 		}
+
+		/* Hide lower-priority nav items on very narrow viewports */
+		:global(.nav-secondary) {
+			display: none;
+		}
 	}
 </style>
 
@@ -171,6 +176,6 @@ import HeaderLink from './HeaderLink.astro';
 		const current = document.documentElement.getAttribute('data-theme') ?? 'dark';
 		const next = current === 'dark' ? 'light' : 'dark';
 		document.documentElement.setAttribute('data-theme', next);
-		localStorage.setItem('ouroboros-theme', next);
+		localStorage.setItem('ourobotos-theme', next);
 	});
 </script>

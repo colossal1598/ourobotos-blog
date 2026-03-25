@@ -1,45 +1,35 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
 import { SITE_TITLE } from '../consts';
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead
-			title={`Newsletter — ${SITE_TITLE}`}
-			description="The loop, weekly. One email a week on software, systems, and the ideas worth thinking about twice."
-		/>
-	</head>
-	<body>
-		<Header />
-		<main>
-			<section class="hero">
-				<h1 class="hero-title">The loop, weekly.</h1>
-				<p class="hero-sub">
-					ouroboros in your inbox. Essays, observations, and the occasional tool worth knowing
-					about — curated, not just a digest.
-				</p>
-			</section>
+<BaseLayout
+	title={`Newsletter — ${SITE_TITLE}`}
+	description="The loop, weekly. One email a week on software, systems, and the ideas worth thinking about twice."
+>
+	<main id="main-content">
+		<section class="hero">
+			<h1 class="hero-title">The loop, weekly.</h1>
+			<p class="hero-sub">
+				ourobotos in your inbox. Essays, observations, and the occasional tool worth knowing
+				about — curated, not just a digest.
+			</p>
+		</section>
 
-			<NewsletterSignup variant="full" />
+		<NewsletterSignup variant="full" />
 
-			<section class="about-section">
-				<h2 class="about-title">What you're signing up for</h2>
-				<ul class="about-list">
-					<li>One email per week, never more</li>
-					<li>The highest-signal version of ouroboros content</li>
-					<li>No AI-generated filler — every issue is written by a person</li>
-					<li>No sponsor slots, no affiliate links</li>
-				</ul>
-			</section>
-		</main>
-		<Footer />
-	</body>
-</html>
+		<section class="about-section">
+			<h2 class="about-title">What you're signing up for</h2>
+			<ul class="about-list">
+				<li>One email per week, never more</li>
+				<li>The highest-signal version of ourobotos content</li>
+				<li>No AI-generated filler — every issue is written by a person</li>
+				<li>No sponsor slots, no affiliate links</li>
+			</ul>
+		</section>
+	</main>
+</BaseLayout>
 
 <style>
 	main {

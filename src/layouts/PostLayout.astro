@@ -1,16 +1,17 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import AISummaryBox from '../components/AISummaryBox.astro';
+import AISummary from '../components/AISummary.astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
-import ReadingProgressBar from '../components/ReadingProgressBar.astro';
+import ReadingProgress from '../components/ReadingProgress.astro';
 
-interface Props extends CollectionEntry<'blog'>['data'] {
+type Props = CollectionEntry<'blog'>['data'] & {
 	readingTime?: number;
-}
+	ogImage?: string;
+};
 
 const {
 	title,
@@ -18,22 +19,24 @@ const {
 	pubDate,
 	updatedDate,
 	category,
+	tags = [],
 	summary,
 	keyPoints,
 	readingTime = 5,
-} = Astro.props;
-
+	ogImage,
+} = Astro.props as Props;
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={`${title} — ouroboros`} description={description} />
+		<BaseHead title={`${title} — ourobotos`} description={description} ogImage={ogImage} />
 	</head>
 	<body>
-		<ReadingProgressBar />
+		<a href="#main-content" class="skip-link">Skip to content</a>
+		<ReadingProgress />
 		<Header />
-		<main>
+		<main id="main-content">
 			<article class="post-article">
 				<header class="post-header">
 					<div class="post-meta-top">
@@ -58,17 +61,15 @@ const {
 					<h1 class="post-title">{title}</h1>
 				</header>
 
-				{
-					summary && keyPoints && keyPoints.length > 0 && (
-						<div class="summary-wrapper">
-							<AISummaryBox
-								summary={summary}
-								keyPoints={keyPoints}
-								readingTime={readingTime}
-							/>
-						</div>
-					)
-				}
+			{
+				summary && keyPoints && keyPoints.length > 0 && (
+					<AISummary
+						summary={summary}
+						keyPoints={keyPoints}
+						readingTime={readingTime}
+					/>
+				)
+			}
 
 				<div class="prose">
 					<slot />
@@ -76,10 +77,19 @@ const {
 
 				<footer class="post-footer">
 					<hr class="post-divider" />
-					<div class="post-tags">
+					<div class="post-meta-footer">
 						<span class:list={['cat-label', `cat-${category}`]}>
 							[{category}]
 						</span>
+						{
+							tags.length > 0 && (
+								<div class="post-tag-list" aria-label="Post tags">
+									{tags.map((tag) => (
+										<span class="tag">#{tag}</span>
+									))}
+								</div>
+							)
+						}
 					</div>
 					<NewsletterSignup variant="inline" />
 					<p class="byline">Written by Eyal</p>
@@ -96,7 +106,7 @@ const {
 	}
 
 	.post-article {
-		max-width: 740px;
+		max-width: 680px;
 		margin: 0 auto;
 	}
 
@@ -125,16 +135,11 @@ const {
 		letter-spacing: 0.01em;
 	}
 
-	/* Category text colors — dark mode */
+	/* Category text colors */
 	.cat-tutorial { color: var(--accent); }
-	.cat-opinion  { color: #c9900c; }
-	.cat-news     { color: #4caf50; }
-	.cat-analysis { color: #d4a843; }
-
-	/* Category text colors — light mode */
-	:global(html[data-theme="light"]) .cat-opinion  { color: #7a4f0d; }
-	:global(html[data-theme="light"]) .cat-news     { color: #1e6b21; }
-	:global(html[data-theme="light"]) .cat-analysis { color: #6b4f0a; }
+	.cat-opinion  { color: var(--cat-opinion); }
+	.cat-news     { color: var(--cat-news); }
+	.cat-analysis { color: var(--cat-analysis); }
 
 	.meta-sep {
 		color: var(--text-muted);
@@ -157,18 +162,10 @@ const {
 		letter-spacing: -0.02em;
 	}
 
-	/* ---- Summary wrapper (constrains to prose width) ---- */
-
-	.summary-wrapper {
-		max-width: 680px;
-		margin: 0 auto;
-	}
-
 	/* ---- Post Footer ---- */
 
 	.post-footer {
-		max-width: 680px;
-		margin: var(--space-16) auto 0;
+		margin-top: var(--space-16);
 	}
 
 	.post-divider {
@@ -177,8 +174,24 @@ const {
 		margin: 0 0 var(--space-8);
 	}
 
-	.post-tags {
+	.post-meta-footer {
+		display: flex;
+		align-items: flex-start;
+		flex-wrap: wrap;
+		gap: var(--space-3);
 		margin-bottom: var(--space-8);
+	}
+
+	.post-tag-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+	}
+
+	.tag {
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		color: var(--text-muted);
 	}
 
 	.byline {

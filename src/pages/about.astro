@@ -1,43 +1,33 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
 import { SITE_TITLE } from '../consts';
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead
-			title={`About — ${SITE_TITLE}`}
-			description="About ouroboros and the person behind it."
-		/>
-	</head>
-	<body>
-		<Header />
-		<main>
-			<header class="page-header">
-				<h1 class="page-title">About</h1>
-			</header>
-			<div class="prose">
-				<p>
-					ouroboros is a writing project about software, systems, and the ideas that connect them.
-					It's where I think through things that seem obvious until you look closely.
-				</p>
-				<p>
-					The name is deliberate. An ouroboros is a snake eating its own tail — a symbol of
-					cycles, self-reference, and recursive regeneration. Most interesting problems in software
-					have this shape: understanding something by building it, building it to understand it.
-				</p>
-				<p>
-					I'm Eyal. I write about the things I find worth thinking twice about. I also run
-					<a href="https://argo-navis.net" target="_blank" rel="noopener noreferrer">argo-navis.net</a>.
-				</p>
-			</div>
-		</main>
-		<Footer />
-	</body>
-</html>
+<BaseLayout
+	title={`About — ${SITE_TITLE}`}
+	description="About ourobotos and the person behind it."
+>
+	<main id="main-content">
+		<header class="page-header">
+			<h1 class="page-title">About</h1>
+		</header>
+		<div class="prose">
+			<p>
+			ourobotos is a writing project about software, systems, and the ideas that connect them.
+				It's where I think through things that seem obvious until you look closely.
+			</p>
+			<p>
+				The name is deliberate. An ouroboros is a snake eating its own tail — a symbol of
+				cycles, self-reference, and recursive regeneration. Most interesting problems in software
+				have this shape: understanding something by building it, building it to understand it.
+			</p>
+			<p>
+				I'm Eyal. I write about the things I find worth thinking twice about. I also run
+				<a href="https://argo-navis.net" target="_blank" rel="noopener noreferrer">argo-navis.net</a>.
+			</p>
+		</div>
+	</main>
+</BaseLayout>
 
 <style>
 	main {

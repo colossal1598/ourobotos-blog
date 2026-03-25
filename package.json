@@ -19,6 +19,7 @@
     "@fontsource-variable/lora": "^5.2.8",
     "@fontsource/jetbrains-mono": "^5.2.8",
     "astro": "^6.0.8",
+    "satori": "^0.26.0",
     "sharp": "^0.34.3"
   }
 }

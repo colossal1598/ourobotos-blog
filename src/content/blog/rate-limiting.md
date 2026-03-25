@@ -3,6 +3,7 @@ title: "Rate Limiting: A Practical Mental Model"
 description: "The three types of rate limiting, when to use each one, and why the algorithm choice matters more than the number."
 pubDate: 2026-03-10
 category: tutorial
+tags: ["backend", "performance", "algorithms"]
 summary: "Rate limiting is one of those topics that looks simple until you're implementing it under real traffic. The right algorithm depends on what you're actually protecting, and most explanations skip that part."
 keyPoints:
   - "Token bucket is the right default: it allows bursts, which is what users actually do"

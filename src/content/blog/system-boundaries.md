@@ -3,6 +3,7 @@ title: "How I Think About System Boundaries"
 description: "A boundary is not where things stop — it's where the cost of change changes. Getting this right is the core skill in software design."
 pubDate: 2026-02-28
 category: analysis
+tags: ["software-design", "architecture", "systems-thinking"]
 summary: "Most software design disagreements are really disagreements about where to put the boundary — what should be inside a module, a service, a contract. The question is rarely answered by convention. It's answered by asking: where does the cost of change change?"
 keyPoints:
   - "A boundary is a place where change on one side doesn't require change on the other"

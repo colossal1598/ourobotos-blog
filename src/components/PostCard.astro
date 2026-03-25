@@ -1,21 +1,17 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import FormattedDate from './FormattedDate.astro';
-import ImagePlaceholder from './ImagePlaceholder.astro';
 
 interface Props {
 	post: CollectionEntry<'blog'>;
-	showPlaceholder?: boolean;
 }
 
-const { post, showPlaceholder = false } = Astro.props;
+const { post } = Astro.props;
 const { title, description, pubDate, category } = post.data;
 ---
 
 <article class="post-card">
 	<a href={`/blog/${post.id}/`} class="card-overlay-link" tabindex="-1" aria-hidden="true"></a>
-
-	{showPlaceholder && <ImagePlaceholder ratio="3/2" class="card-placeholder" />}
 
 	<div class="card-content">
 		<div class="card-meta">
@@ -58,12 +54,6 @@ const { title, description, pubDate, category } = post.data;
 		border-left-color: transparent;
 	}
 
-	.card-placeholder {
-		border-radius: 0;
-		border: none;
-		border-bottom: 1px solid var(--border);
-	}
-
 	.card-overlay-link {
 		position: absolute;
 		inset: 0;
@@ -100,13 +90,9 @@ const { title, description, pubDate, category } = post.data;
 
 	/* Category text colors only — no backgrounds */
 	.cat-tutorial { color: var(--accent); }
-	.cat-opinion  { color: #c9900c; }
-	.cat-news     { color: #4caf50; }
-	.cat-analysis { color: #d4a843; }
-
-	:global(html[data-theme="light"]) .cat-opinion  { color: #7a4f0d; }
-	:global(html[data-theme="light"]) .cat-news     { color: #1e6b21; }
-	:global(html[data-theme="light"]) .cat-analysis { color: #6b4f0a; }
+	.cat-opinion  { color: var(--cat-opinion); }
+	.cat-news     { color: var(--cat-news); }
+	.cat-analysis { color: var(--cat-analysis); }
 
 	/* ---- Title ---- */
 

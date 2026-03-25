@@ -1,0 +1,50 @@
+---
+interface Props {
+	filename?: string;
+	lang?: string;
+}
+
+const { filename, lang } = Astro.props;
+const label = filename ?? lang ?? undefined;
+---
+
+<figure class="code-block">
+	{label && <figcaption class="code-caption">{label}</figcaption>}
+	<pre class={lang ? `language-${lang}` : undefined}><code><slot /></code></pre>
+</figure>
+
+<style>
+	.code-block {
+		margin: var(--space-6) 0;
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		border: 1px solid var(--border);
+		background-color: var(--bg-tertiary);
+	}
+
+	.code-caption {
+		display: block;
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		color: var(--text-muted);
+		background-color: var(--bg-elevated);
+		border-bottom: 1px solid var(--border);
+		padding: var(--space-2) var(--space-4);
+		letter-spacing: 0.01em;
+	}
+
+	pre {
+		margin: 0;
+		padding: var(--space-5) var(--space-4);
+		overflow-x: auto;
+		background-color: transparent;
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		line-height: 1.65;
+	}
+
+	code {
+		font-family: inherit;
+		color: var(--text-secondary);
+	}
+</style>
